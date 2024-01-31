@@ -1,0 +1,29 @@
+server:
+    port: 9080
+spring:
+    datasource:
+        driver-class-name: org.postgresql.Driver
+        password: devKH@2023
+        url: jdbc:postgresql://localhost:5451/dev_Keycloak
+        username: devkh
+    jpa:
+        hibernate:
+            ddl-auto: update
+        properties:
+            hibernate:
+                dialect: org.hibernate.dialect.PostgreSQLDialect
+                format_sql: true
+                show_sql: true
+    jwt:
+        auth:
+            converter:
+                principle-attribute: preferred_username
+                resource-id: dev-api
+    profiles:
+        active: '[dev]'
+    security:
+        oauth2:
+            resourceserver:
+                jwt:
+                    issuer-uri: http://localhost:8180/realms/dev-test
+                    jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs

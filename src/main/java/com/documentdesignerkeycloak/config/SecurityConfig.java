@@ -1,5 +1,6 @@
 package com.documentdesignerkeycloak.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -13,12 +14,14 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
+	private final JwtAuthConverter jwtAuthConverter;
     @Bean
     public SecurityFilterChain securityFilterChain (HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf(AbstractHttpConfigurer::disable);
-//        httpSecurity.authorizeHttpRequests(authorize ->authorize.anyRequest().authenticated());
-        httpSecurity.oauth2ResourceServer(t->t.jwt(Customizer.withDefaults()));
+        httpSecurity.oauth2ResourceServer(t->
+			t.jwt().jwtAuthenticationConverter(jwtAuthConverter));
 
         httpSecurity.sessionManagement(t->t.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         return  httpSecurity.build();
