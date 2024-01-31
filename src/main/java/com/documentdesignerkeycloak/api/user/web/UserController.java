@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     @GetMapping()
-    @PreAuthorize("hasRole('client_user')")
+    @PreAuthorize("hasRole('user')")
     public String getWelcome(){
         return "Hello now u are free no security";
     }
