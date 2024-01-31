@@ -1,29 +1,61 @@
 package com.documentdesignerkeycloak.config;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.stereotype.Component;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
+import java.util.Set;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
-@RequiredArgsConstructor
+@Component
 public class SecurityConfig {
-	private final JwtAuthConverter jwtAuthConverter;
-    @Bean
-    public SecurityFilterChain securityFilterChain (HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.csrf(AbstractHttpConfigurer::disable);
-        httpSecurity.oauth2ResourceServer(t->
-			t.jwt().jwtAuthenticationConverter(jwtAuthConverter));
 
-        httpSecurity.sessionManagement(t->t.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-        return  httpSecurity.build();
-    }
+	@Bean
+	@SuppressWarnings("unchecked")
+	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+		http
+			.cors(corsConfig -> corsConfigurationSource())
+			.authorizeHttpRequests(authorize -> authorize
+				.requestMatchers(HttpMethod.GET,"/api/v1/user").hasRole("user")
+				.anyRequest().authenticated()
+			)
+			.oauth2ResourceServer(oauth2 -> oauth2
+				.jwt(jwtConfigurer -> jwtConfigurer
+					.jwtAuthenticationConverter(jwt -> {
+						List<String> roles = (List<String>) jwt.getClaimAsMap("realm_access").getOrDefault("roles", List.of());
+						SimpleAuthorityMapper authorityMapper = new SimpleAuthorityMapper();
+						Set<GrantedAuthority> authorities = authorityMapper.mapAuthorities(
+							roles.stream().map(SimpleGrantedAuthority::new).toList()
+						);
+						return new JwtAuthenticationToken(jwt, authorities);
+					})
+				)
+			);
+		return http.build();
+	}
+
+	@Bean
+	CorsConfigurationSource corsConfigurationSource() {
+		CorsConfiguration configuration = new CorsConfiguration();
+		configuration.setAllowedOrigins(List.of("*"));
+		configuration.setAllowedMethods(List.of("*"));
+		configuration.setAllowedHeaders(List.of("*"));
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", configuration);
+		return source;
+	}
+
 }
