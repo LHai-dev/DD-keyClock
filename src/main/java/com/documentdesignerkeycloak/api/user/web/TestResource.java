@@ -7,19 +7,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class TestResource {
 
-    @GetMapping("/common")
+    @GetMapping("/public")
     public String getEveryoneText() {
         return "Both ADMIN and USER can access this!!";
     }
 
     @GetMapping("/user")
-    @RolesAllowed("USER")
+//    @RolesAllowed("USER")
     public String getUserText() {
         return "hello USER";
     }
 
     @GetMapping("/admin")
-    @RolesAllowed("ADMIN")
+//    @RolesAllowed("ADMIN")
     public String getAdminText() {
         return "hello ADMIN";
     }
