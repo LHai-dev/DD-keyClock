@@ -50,6 +50,26 @@ services:
       interval: 10s
       retries: 10
 
+
+  devdb:
+    image: 'postgres:15'
+    container_name: 'devdb'
+    hostname: 'devdb'
+    environment:
+      - TZ=GMT+7
+      - PGTZ=GMT+7
+      - POSTGRES_USER=devkh
+      - POSTGRES_PASSWORD=devKH@2023
+      - POSTGRES_DB=dev_kh
+    ports:
+      - '5451:5432'
+    volumes:
+      - keycloak_db_vol:/var/lib/postgresql/data/
+    restart: always
+    networks:
+      - devkh_micro_net
+
+
 networks:
   # backend:
   #  name: app
@@ -57,8 +77,12 @@ networks:
   keycloak:
     name: keycloak
     driver: bridge
-
+  devkh_micro_net:
+    external: true
+    name: devkh_micro_net
 volumes:
+  keycloak_db_vol:
+  keycloak_data:
   postgres_data_keycloak:
     driver: local
 
