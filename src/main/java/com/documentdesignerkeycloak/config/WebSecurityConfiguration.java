@@ -42,7 +42,7 @@ public class WebSecurityConfiguration {
 //            .requestMatchers("/admin").hasAuthority(KeycloakJwtRolesConverter.PREFIX_RESOURCE_ROLE + "dev-test_client_admin")
 			.requestMatchers("/user").hasRole("client_user")
 			.requestMatchers("/admin").hasRole("client_admin")
-            // All users, even once without an access token, can access the endpoint /public.
+            // All users, even once without an access token, can access the endpoint /public
             .requestMatchers("/public").permitAll()
     );
 
