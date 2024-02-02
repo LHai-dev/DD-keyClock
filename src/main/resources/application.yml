@@ -16,25 +16,8 @@ spring:
                 show_sql: true
     profiles:
         active: '[dev]'
-#    security:
-#        oauth2:
-#            resourceserver:
-#                jwt:
-#                    issuer-uri: http://localhost:8180/realms/dev-test
-#                    jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
     security:
         oauth2:
-#            client:
-#                registration:
-#                    keycloak:
-#                        client-id: client-resource_server
-#                        client-secret: dHgfkqoxAMhuZOo7Zy3oehxHS93PJFxl
-#                        scope: openid
-#                        authorization-grant-type: authorization_code
-#                provider:
-#                    keycloak:
-#                        issuer-uri: http://localhost:8180/realms/AuthorizationCodeflowwithKeycloak
-#                        user-name-attribute: preferred_username
             resourceserver:
                 jwt:
                     issuer-uri: http://localhost:8180/realms/AuthorizationCodeflowwithKeycloak
