@@ -2,6 +2,7 @@ package com.documentdesignerkeycloak.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.oauth2.server.resource.authentication.DelegatingJwtGrantedAuthoritiesConverter;
@@ -11,6 +12,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class WebSecurityConfiguration {
 
   /**
@@ -35,9 +37,11 @@ public class WebSecurityConfiguration {
 	  System.out.println(authoritiesConverter);
     httpSecurity.authorizeHttpRequests(authorize -> authorize
             // Only users with the role "user" can access the endpoint /user.
-            .requestMatchers("/user").hasAuthority(KeycloakJwtRolesConverter.PREFIX_RESOURCE_ROLE + "dev-test_client_user")
+            .requestMatchers("/user").hasAuthority(KeycloakJwtRolesConverter.PREFIX_RESOURCE_ROLE + "dev-test_user")
             // Only users with the role "admin" can access the endpoint /admin.
-            .requestMatchers("/admin").hasAuthority(KeycloakJwtRolesConverter.PREFIX_RESOURCE_ROLE + "dev-test_client_admin")
+//            .requestMatchers("/admin").hasAuthority(KeycloakJwtRolesConverter.PREFIX_RESOURCE_ROLE + "dev-test_client_admin")
+			.requestMatchers("/user").hasRole("client_user")
+			.requestMatchers("/admin").hasRole("client_admin")
             // All users, even once without an access token, can access the endpoint /public.
             .requestMatchers("/public").permitAll()
     );
