@@ -14,11 +14,6 @@ spring:
                 dialect: org.hibernate.dialect.PostgreSQLDialect
                 format_sql: true
                 show_sql: true
-    jwt:
-        auth:
-            converter:
-                principle-attribute: preferred_username
-                resource-id: dev-api
     profiles:
         active: '[dev]'
 #    security:
