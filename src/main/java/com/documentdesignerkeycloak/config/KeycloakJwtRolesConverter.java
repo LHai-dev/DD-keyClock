@@ -1,5 +1,6 @@
 package com.documentdesignerkeycloak.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -9,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.stream.Collectors;
-
+@Slf4j
 public class KeycloakJwtRolesConverter implements Converter<Jwt, Collection<GrantedAuthority>> {
   /**
    * Prefix used for realm level roles.
@@ -50,14 +51,19 @@ public class KeycloakJwtRolesConverter implements Converter<Jwt, Collection<Gran
     if (realmAccess != null && !realmAccess.isEmpty()) {
       // From the realm_access claim get the roles
       Collection<String> roles = realmAccess.get(CLAIM_ROLES);
+	  log.info("ROLE : "+ roles);
+	  log.info("TOKEN : "+ jwt.getTokenValue());
       // Check if any roles are present
       if (roles != null && !roles.isEmpty()) {
         // Iterate of the roles and add them to the granted authorities
         Collection<GrantedAuthority> realmRoles = roles.stream()
-                // Prefix all realm roles with "ROLE_realm_"
+
+		  // Prefix all realm roles with "ROLE_realm_"
                 .map(role -> new SimpleGrantedAuthority(PREFIX_REALM_ROLE + role))
                 .collect(Collectors.toList());
-        grantedAuthorities.addAll(realmRoles);
+		  log.info("realmRoles : "+ realmRoles);
+
+		  grantedAuthorities.addAll(realmRoles);
       }
     }
 
@@ -65,8 +71,9 @@ public class KeycloakJwtRolesConverter implements Converter<Jwt, Collection<Gran
     // A user might have access to multiple resources all containing their own roles. Therefore, it is a map of
     // resource each possibly containing a "roles" property.
     Map<String, Map<String, Collection<String>>> resourceAccess = jwt.getClaim(CLAIM_RESOURCE_ACCESS);
+	  log.info("resourceAccess : "+ resourceAccess);
 
-    // Check if resources are assigned
+	  // Check if resources are assigned
     if (resourceAccess != null && !resourceAccess.isEmpty()) {
       // Iterate of all the resources
       resourceAccess.forEach((resource, resourceClaims) -> {

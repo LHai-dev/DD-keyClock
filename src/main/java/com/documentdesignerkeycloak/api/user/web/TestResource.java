@@ -13,13 +13,11 @@ public class TestResource {
     }
 
     @GetMapping("/user")
-//    @RolesAllowed("USER")
     public String getUserText() {
         return "hello USER";
     }
 
     @GetMapping("/admin")
-//    @RolesAllowed("ADMIN")
     public String getAdminText() {
         return "hello ADMIN";
     }

@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.DelegatingJwtGrantedAuthoritiesConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
@@ -34,14 +35,14 @@ public class WebSecurityConfiguration {
     // Set up http security to use the JWT converter defined above
     httpSecurity.oauth2ResourceServer().jwt().jwtAuthenticationConverter(
             jwt -> new JwtAuthenticationToken(jwt, authoritiesConverter.convert(jwt)));
-	  System.out.println(authoritiesConverter);
     httpSecurity.authorizeHttpRequests(authorize -> authorize
             // Only users with the role "user" can access the endpoint /user.
             .requestMatchers("/user").hasAuthority(KeycloakJwtRolesConverter.PREFIX_RESOURCE_ROLE + "dev-test_user")
+            .requestMatchers("/admin").hasAuthority(KeycloakJwtRolesConverter.PREFIX_RESOURCE_ROLE + "dev-test_admin")
             // Only users with the role "admin" can access the endpoint /admin.
 //            .requestMatchers("/admin").hasAuthority(KeycloakJwtRolesConverter.PREFIX_RESOURCE_ROLE + "dev-test_client_admin")
-			.requestMatchers("/user").hasRole("client_user")
-			.requestMatchers("/admin").hasRole("client_admin")
+//			.requestMatchers("/user").hasRole("user")
+//			.requestMatchers("/admin").hasRole("user")
             // All users, even once without an access token, can access the endpoint /public
             .requestMatchers("/public").permitAll()
     );
