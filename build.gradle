@@ -41,6 +41,10 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 	implementation 'org.springframework.security:spring-security-oauth2-client:6.2.1'
 
+	implementation 'org.keycloak:keycloak-spring-boot-starter:23.0.6'
+	implementation 'org.keycloak:keycloak-admin-client:23.0.6'
+	implementation 'com.konghq:unirest-java:3.14.5'
+
 }
 
 dependencyManagement {

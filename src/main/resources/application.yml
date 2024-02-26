@@ -20,4 +20,12 @@ spring:
         oauth2:
             resourceserver:
                 jwt:
-                    issuer-uri: http://localhost:8180/realms/AuthorizationCodeflowwithKeycloak
+                    issuer-uri: http://localhost:8280/realms/dev-keycloak
+keycloak:
+    realm: dev-keycloak
+    domain: localhost:8280
+    adminClientId: admin-cli
+    adminClientSecret: TzfTf6Tzb48qsc0YI1lfiJZLwQtf3wgk
+    client: admin-cli
+    urls:
+        auth: http://${keycloak.domain}
